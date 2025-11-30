@@ -110,3 +110,56 @@ The endpoint uses **express-validator** to ensure the `email` is a valid format 
 ### Notes
 -   The returned JWT token should be included in the `Authorization` header of subsequent requests as a Bearer token (e.g., `Authorization: Bearer <token>`).
 -   The endpoint is defined in `backend/routes/user.routes.js` and handled by `userController.loginUser`.
+
+
+## `/users/profile` Endpoint
+
+### Overview
+GET `/users/profile` returns the authenticated user's profile. Requires authentication middleware.
+
+### Request
+- **URL**: `/users/profile`
+- **Method**: GET
+- **Headers**: `Authorization: Bearer <token>`
+
+### Responses
+| Status Code | Description |
+|-------------|-------------|
+| **200 OK** | Returns user profile (id, email, fullname, createdAt). |
+| **401 Unauthorized** | Missing or invalid token. |
+
+### Example Successful Response
+```json
+{
+  "_id": "64b8f2a5c9e4f5d6a7b8c9d0",
+  "email": "user@example.com",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "createdAt": "2025-11-30T10:00:00.000Z"
+}
+```
+
+## `/users/logout` Endpoint
+
+### Overview
+GET `/users/logout` logs out the user by clearing the JWT cookie and blacklisting the token.
+
+### Request
+- **URL**: `/users/logout`
+- **Method**: GET
+- **Headers**: `Authorization: Bearer <token>` (or cookie `token`)
+
+### Responses
+| Status Code | Description |
+|-------------|-------------|
+| **200 OK** | `{ "message": "Logout successful" }` |
+| **401 Unauthorized** | Invalid or missing token. |
+
+### Example Response
+```json
+{
+  "message": "Logout successful"
+}
+```

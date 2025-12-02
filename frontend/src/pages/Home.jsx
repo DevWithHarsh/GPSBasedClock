@@ -1,12 +1,13 @@
 import React from 'react';
 import { MapPin, Bell, Play, Apple } from 'lucide-react';
+import MapImage from "../assets/Map.jpeg";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
-          
+
           {/* Left Content */}
           <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
             {/* Badge */}
@@ -35,7 +36,7 @@ const Home = () => {
                 <Apple className="w-5 h-5" />
                 <span>Download App</span>
               </button>
-              
+
               <button className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-2xl shadow-md transition-all hover:shadow-lg border border-gray-200">
                 <Play className="w-5 h-5 text-blue-600" fill="currentColor" />
                 <span>Watch Demo</span>
@@ -55,83 +56,74 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Right Phone Mockup */}
-          <div className="relative flex justify-center lg:justify-end">
-            {/* Floating Map Pin */}
-            <div className="absolute top-8 left-4 sm:left-12 lg:left-0 z-10 animate-bounce">
-              <div className="bg-red-500 p-3 rounded-full shadow-lg">
-                <MapPin className="w-6 h-6 text-white" fill="currentColor" />
-              </div>
-            </div>
+          {/* Ultra-Realistic Phone */}
+          <div className="relative w-[260px] sm:w-[280px] md:w-[300px] flex justify-center mx-auto lg:justify-end">
+            <div className="
+    mx-auto 
+    rounded-[3rem]
+    p-[6px]
+    bg-[#0d0d0f]
+    shadow-[0_15px_40px_rgba(0,0,0,0.35)]
+    border border-[#1a1a1d]
+    relative
+  ">
 
-            {/* Floating Bell */}
-            <div className="absolute top-32 right-4 sm:right-12 lg:right-8 z-10">
-              <div className="bg-white p-3 rounded-full shadow-xl animate-bell">
-                <Bell className="w-6 h-6 text-yellow-500" fill="currentColor" />
+              {/* Dynamic Island */}
+              <div className="
+      absolute top-[10px] left-1/2 -translate-x-1/2 
+      w-32 h-8 bg-black rounded-full 
+      shadow-[0_4px_10px_rgba(0,0,0,0.35)]
+      z-20 flex items-center justify-center gap-2
+    ">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <p className="text-white text-[11px] font-medium">GPS Active</p>
               </div>
-            </div>
 
-            {/* Phone Mockup */}
-            <div className="relative w-72 sm:w-80 lg:w-96">
-              <div className="bg-gray-900 rounded-[3rem] p-3 shadow-2xl">
-                <div className="bg-white rounded-[2.5rem] overflow-hidden">
-                  {/* Status Bar */}
-                  <div className="bg-gray-100 px-6 py-3 flex justify-between items-center">
-                    <div className="text-xs font-semibold text-gray-900">9:41</div>
-                    <div className="flex items-center gap-1 bg-green-500 px-3 py-1 rounded-full">
-                      <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                      <span className="text-xs font-semibold text-white">GPS Active</span>
+              {/* Screen */}
+              <div className="
+      aspect-[9/19.5] 
+      overflow-hidden 
+      rounded-[2.5rem]
+      relative
+    ">
+                {/* Map Background Image */}
+                <img
+                  src={MapImage}
+                  alt="map"
+                  className="w-full h-full object-cover"
+                />
+
+
+                {/* Bottom Card */}
+                <div className="absolute bottom-4 left-4 right-4 bg-white rounded-2xl shadow-xl p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-100 p-3 rounded-xl">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900 text-sm">Central Station</h3>
+                      <p className="text-gray-500 text-xs">Arriving in 15 min</p>
                     </div>
                   </div>
 
-                  {/* Map Area */}
-                  <div className="relative h-80 bg-gradient-to-br from-blue-100 to-purple-100 p-6">
-                    {/* Curved Route */}
-                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 320">
-                      <path
-                        d="M 150 80 Q 200 160 150 240"
-                        stroke="#60a5fa"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeLinecap="round"
-                        className="animate-pulse"
-                      />
-                    </svg>
+                  <div className="mt-3 flex justify-between text-[11px] text-gray-500">
+                    <span>Start</span>
+                    <span>Alarm set</span>
+                  </div>
 
-                    {/* Start Pin */}
-                    <div className="absolute top-16 left-1/2 transform -translate-x-1/2">
-                      <MapPin className="w-10 h-10 text-blue-600" fill="currentColor" />
-                    </div>
-
-                    {/* Destination Card */}
-                    <div className="absolute bottom-6 left-6 right-6 bg-white rounded-2xl shadow-lg p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-blue-100 p-3 rounded-xl">
-                          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 text-sm">Central Station</h3>
-                          <p className="text-gray-500 text-xs">Arriving in 15 min</p>
-                        </div>
-                      </div>
-
-                      {/* Progress Bar */}
-                      <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
-                        <span>Start</span>
-                        <span>Alarm set</span>
-                      </div>
-                      <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full w-3/4 bg-blue-600 rounded-full animate-progress"></div>
-                      </div>
-                    </div>
+                  <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full w-3/4 bg-blue-600 rounded-full"></div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
+
         </div>
       </div>
 

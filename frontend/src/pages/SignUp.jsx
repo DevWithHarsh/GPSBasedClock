@@ -1,227 +1,173 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { UserDataContext } from "../context/UserContext";
 
 export default function Signup() {
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    remember: false,
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+    const [form, setForm] = useState({
+        firstname: "",
+        lastname: "",
+        email: "",
+        password: "",
+        remember: false,
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState({});
 
-  function handleChange(e) {
-    const { name, value, type, checked } = e.target;
-    setForm((s) => ({ ...s, [name]: type === "checkbox" ? checked : value }));
-  }
+    const navigate = useNavigate();
+    const { setUser } = React.useContext(UserDataContext);
 
-  function validate() {
-    const errs = {};
-
-    if (!form.firstName.trim()) errs.firstName = "First name is required";
-    if (!form.lastName.trim()) errs.lastName = "Last name is required";
-
-    if (!form.email.trim()) errs.email = "Email is required";
-    else if (!/^\S+@\S+\.\S+$/.test(form.email))
-      errs.email = "Enter a valid email";
-
-    if (!form.password) errs.password = "Password is required";
-    else if (form.password.length < 6)
-      errs.password = "Password must be at least 6 characters";
-
-    return errs;
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const v = validate();
-    setErrors(v);
-    if (Object.keys(v).length === 0) {
-      console.log("Signing up:", form);
-      alert("Sign up successful (demo). Check console for form data.");
+    function handleChange(e) {
+        const { name, value, type, checked } = e.target;
+        setForm((s) => ({ ...s, [name]: type === "checkbox" ? checked : value }));
     }
-  }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-8 px-4">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
-        
-        {/* LEFT FORM */}
-        <div className="p-10 md:p-12 lg:p-14">
-          <div className="max-w-md mx-auto">
+    function validate() {
+        const errs = {};
 
-            <h2 className="text-3xl font-semibold text-slate-800">Welcome Back</h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Enter your details to access your dashboard.
-            </p>
+        if (!form.firstname.trim()) errs.firstname = "First name is required";
+        if (!form.lastname.trim()) errs.lastname = "Last name is required";
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+        if (!form.email.trim()) errs.email = "Email is required";
+        else if (!/^\S+@\S+\.\S+$/.test(form.email))
+            errs.email = "Enter a valid email";
 
-              {/* FIRST + LAST NAME */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        if (!form.password) errs.password = "Password is required";
+        else if (form.password.length < 6)
+            errs.password = "Password must be at least 6 characters";
 
-                {/* FIRST NAME */}
-                <div>
-                  <label className="text-xs font-medium text-slate-600">
-                    First Name
-                  </label>
-                  <input
-                    name="firstName"
-                    value={form.firstName}
-                    onChange={handleChange}
-                    className={`w-full rounded-lg border px-4 py-3 text-sm focus:ring-2 focus:ring-sky-400 ${
-                      errors.firstName ? "border-red-300" : "border-slate-200"
-                    }`}
-                    placeholder="John"
-                  />
-                  {errors.firstName && (
-                    <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
-                  )}
+        return errs;
+    }
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        const { firstname, lastname, email, password } = form;
+
+        const newUser = {
+            fullname: {
+                firstname,
+                lastname,
+            },
+            email,
+            password,
+        };
+
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/users/register`,
+                newUser
+            );
+
+            if (response.status === 201) {
+                const data = response.data;
+                setUser(data.user);
+                localStorage.setItem("token", data.token);
+                navigate("/dashboardHome");
+            }
+
+            setForm({
+                firstname: "",
+                lastname: "",
+                email: "",
+                password: "",
+                remember: false,
+            });
+        } catch (error) {
+            console.error("Error during signup:", error);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 py-8 px-4">
+            <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
+                <div className="p-10 md:p-12 lg:p-14">
+                    <div className="max-w-md mx-auto">
+                        <h2 className="text-3xl font-semibold text-slate-800">Welcome Back</h2>
+                        <p className="mt-2 text-sm text-slate-500">
+                            Enter your details to access your dashboard.
+                        </p>
+
+                        <form onSubmit={submitHandler} className="mt-8 space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-xs font-medium text-slate-600">
+                                        First Name
+                                    </label>
+                                    <input
+                                        name="firstname"
+                                        value={form.firstname}
+                                        onChange={handleChange}
+                                        className={`w-full rounded-lg border px-4 py-3 text-sm focus:ring-2 focus:ring-sky-400 ${errors.firstname ? "border-red-300" : "border-slate-200"
+                                            }`}
+                                        placeholder="John"
+                                    />
+                                    {errors.firstname && (
+                                        <p className="mt-1 text-xs text-red-500">{errors.firstname}</p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label className="text-xs font-medium text-slate-600">
+                                        Last Name
+                                    </label>
+                                    <input
+                                        name="lastname"
+                                        value={form.lastname}
+                                        onChange={handleChange}
+                                        className={`w-full rounded-lg border px-4 py-3 text-sm focus:ring-2 focus:ring-sky-400 ${errors.lastname ? "border-red-300" : "border-slate-200"
+                                            }`}
+                                        placeholder="Doe"
+                                    />
+                                    {errors.lastname && (
+                                        <p className="mt-1 text-xs text-red-500">{errors.lastname}</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-medium text-slate-600">
+                                    Email Address
+                                </label>
+                                <input
+                                    name="email"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    className={`w-full rounded-lg border px-4 py-3 text-sm focus:ring-2 focus:ring-sky-400 ${errors.email ? "border-red-300" : "border-slate-200"
+                                        }`}
+                                    placeholder="john@example.com"
+                                />
+                                {errors.email && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-medium text-slate-600">
+                                    Password
+                                </label>
+                                <input
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    value={form.password}
+                                    onChange={handleChange}
+                                    className={`w-full rounded-lg border px-4 py-3 text-sm focus:ring-2 focus:ring-sky-400 ${errors.password ? "border-red-300" : "border-slate-200"
+                                        }`}
+                                    placeholder="••••••••"
+                                />
+                                {errors.password && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                                )}
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 px-6 py-3 text-white font-semibold"
+                            >
+                                Sign Up
+                            </button>
+                        </form>
+                    </div>
                 </div>
-
-                {/* LAST NAME */}
-                <div>
-                  <label className="text-xs font-medium text-slate-600">
-                    Last Name
-                  </label>
-                  <input
-                    name="lastName"
-                    value={form.lastName}
-                    onChange={handleChange}
-                    className={`w-full rounded-lg border px-4 py-3 text-sm focus:ring-2 focus:ring-sky-400 ${
-                      errors.lastName ? "border-red-300" : "border-slate-200"
-                    }`}
-                    placeholder="Doe"
-                  />
-                  {errors.lastName && (
-                    <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
-                  )}
-                </div>
-
-              </div>
-
-              {/* EMAIL */}
-              <div>
-                <label className="text-xs font-medium text-slate-600">
-                  Email Address
-                </label>
-
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    {/* MAIL ICON — RESTORED */}
-                    <svg
-                      className="h-4 w-4 text-slate-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M16 12H8m0 0l-4 2V6l4 2m0 0l8-4v12l-8-4z"
-                      />
-                    </svg>
-                  </div>
-
-                  <input
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    className={`w-full rounded-lg border px-4 py-3 pl-10 text-sm focus:ring-2 focus:ring-sky-400 ${
-                      errors.email ? "border-red-300" : "border-slate-200"
-                    }`}
-                    placeholder="john@example.com"
-                  />
-                </div>
-
-                {errors.email && (
-                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-                )}
-              </div>
-
-              {/* PASSWORD */}
-              <div>
-                <label className="text-xs font-medium text-slate-600">
-                  Password
-                </label>
-
-                <div className="mt-1 relative">
-
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    {/* LOCK ICON — RESTORED */}
-                    <svg
-                      className="h-4 w-4 text-slate-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 11c1.657 0 3-1.343 3-3V6a3 3 0 10-6 0v2c0 1.657 1.343 3 3 3z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 11h14v8a2 2 0 01-2 2H7a2 2 0 01-2-2v-8z"
-                      />
-                    </svg>
-                  </div>
-
-                  <input
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={form.password}
-                    onChange={handleChange}
-                    className={`w-full rounded-lg border px-4 py-3 pl-10 pr-10 text-sm focus:ring-2 focus:ring-sky-400 ${
-                      errors.password ? "border-red-300" : "border-slate-200"
-                    }`}
-                    placeholder="••••••••"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-500"
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
-
-                {errors.password && (
-                  <p className="mt-1 text-xs text-red-500">{errors.password}</p>
-                )}
-              </div>
-
-              {/* REMEMBER ME */}
-              <label className="inline-flex items-center gap-2 text-sm text-slate-600">
-                <input
-                  type="checkbox"
-                  name="remember"
-                  checked={form.remember}
-                  onChange={handleChange}
-                />
-                Remember me
-              </label>
-
-              {/* SUBMIT */}
-              <button
-                type="submit"
-                className="w-full rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 px-6 py-3 text-white font-semibold"
-              >
-                Sign Up
-              </button>
-
-            </form>
-          </div>
-        </div>
-
                 {/* RIGHT: Promo gradient panel */}
                 <div className="hidden md:flex flex-col justify-center p-10 md:p-12 lg:p-14 bg-gradient-to-br from-sky-500 to-indigo-600 text-white">
                     <div className="max-w-sm mx-auto">

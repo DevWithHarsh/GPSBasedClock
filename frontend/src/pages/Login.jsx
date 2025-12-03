@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { UserDataContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Singin() {
   const [form, setForm] = useState({
@@ -8,6 +11,9 @@ export default function Singin() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const { user, setUser } = React.useContext(UserDataContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,16 +28,32 @@ export default function Singin() {
     return errs;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const v = validate();
-    setErrors(v);
-    if (Object.keys(v).length === 0) {
-      // Hook into your auth provider here (Firebase / API / NextAuth, etc.)
-      console.log("Sign in:", form);
-      alert("Signed in (demo). Check console for form data.");
+
+    // Extract only the necessary fields for the payload
+    const userData = {
+      email: form.email,
+      password: form.password,
+    };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/login`,
+        userData
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        setUser(data.user);
+        localStorage.setItem("token", data.token);
+        navigate("/dashboardHome");
+      }
+    } catch (error) {
+      console.error("Login failed", error);
+      setErrors({ general: "Login failed. Please try again." });
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
@@ -127,7 +149,7 @@ export default function Singin() {
                 </button>
               </div>
 
-              <p className="text-center text-xs text-slate-400">Don't have an account? <a href="#signup" className="text-sky-600 font-medium">Create account</a></p>
+              <p className="text-center text-xs text-slate-400">Don't have an account? <a href="/signup" className="text-sky-600 font-medium">Create account</a></p>
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -205,4 +227,4 @@ export default function Singin() {
       </div>
     </div>
   );
-}
+};
